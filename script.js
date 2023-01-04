@@ -1,11 +1,17 @@
-const consultaCEP = fetch("https://viacep.com.br/ws/01001000/json/")
-  .then((response) => response.json())
-  .then((r) => {
-    if (r.error) {
-      throw Error("Esse cep não existe");
-    } else {
-      console.log(r);
+async function searchAddres(cep) {
+  try {
+    const consultaCEP = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+    const consultaConvertida = await consultaCEP.json();
+    if (consultaConvertida.erro) {
+      throw Error("CEP não existente");
     }
-  })
-  .catch((error) => console.log(error))
-  .finally((message) => console.log("Processamento concluído"));
+    console.log(consultaConvertida);
+    return consultaConvertida;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+let ceps = ["01001000", "01001001"];
+let conjuntoCeps = ceps.map((values) => searchAddres(values));
+Promise.all(conjuntoCeps).then((response) => console.log(response));
